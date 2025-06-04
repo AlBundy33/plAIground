@@ -69,4 +69,4 @@ sudo nvidia-ctk runtime configure --runtime=docker
 sudo systemctl restart docker
 ```
 
-run [wsl-portproxy.cmd](wsl-portproxy.cmd) to expose ports to your LAN (otherwise you can only use localhost)
+run [wsl-portproxy.cmd](wsl-portproxy.cmd) (uses [wsl-portproxy.ps1](wsl-portproxy.ps1)) to expose ports to your LAN (otherwise you can only use localhost)
