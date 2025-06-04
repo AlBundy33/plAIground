@@ -5,6 +5,10 @@ run with
 ```
 docker compose up -d
 ```
+to check logs run
+```
+docker compose logs -f
+```
 
 # cleanup
 If you are running docker in WSL2 it's better to use bind-mounts outside the wsl-VM.
