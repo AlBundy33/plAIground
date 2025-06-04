@@ -1,0 +1,2 @@
+# Ignoriere lokale Daten- und Output-Ordner für Docker-Builds
+data/
