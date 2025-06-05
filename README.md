@@ -5,6 +5,10 @@ run with
 ```
 docker compose up -d
 ```
+or to start all services
+```
+docker compose --profile all up -d
+```
 to check logs run
 ```
 docker compose logs -f
