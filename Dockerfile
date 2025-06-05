@@ -49,36 +49,29 @@ VOLUME ${DATA_DIR}
 # do not use json-sytanx for CMD or DATA_DIR will not be set
 CMD ./webui.sh -f --api --listen --skip-prepare-environment --data-dir "${DATA_DIR}" --xformers
 
-# TBD
-FROM base as comfyui
-FROM nvidia/cuda:12.9.0-cudnn-runtime-ubuntu24.04
-
-# System dependencies
-RUN apt install --update -y --no-install-recommends \
-    git \
-    python3 python3-pip python-is-python3 \
-    wget curl libgl1 libglib2.0-0 \
- && apt clean
+FROM base AS comfyui
+WORKDIR /app
 
 # Clone repo
-RUN git clone https://github.com/comfyanonymous/ComfyUI.git /app
+RUN git clone https://github.com/comfyanonymous/ComfyUI.git .
 
-WORKDIR /app
 ENV HF_HOME=/huggingface
+ENV DATA_DIR=/data
 
 # Install requirements
 RUN --mount=type=cache,target=/root/.cache/pip \
-    mkdir -m 775 -p $HF_HOME \
- && python3 -m pip config set global.break-system-packages true \
+    mkdir -m 775 -p $HF_HOME $DATA_DIR \
  && pip install -r requirements.txt
 
-VOLUME /huggingface
-VOLUME /app/models
-VOLUME /app/outputs
-VOLUME /app/config
-VOLUME /app/extensions
+VOLUME ${HF_HOME}
+VOLUME ${DATA_DIR}
 
 EXPOSE 8188
 
+# download
+# https://huggingface.co/Comfy-Org/stable-diffusion-v1-5-archive/resolve/main/v1-5-pruned-emaonly-fp16.safetensors?download=true
+# to data/comfyui/models/checkpoints
+
 # Default entrypoint
-CMD ["python", "main.py", "--listen", "0.0.0.0"]
+CMD mkdir ${DATA_DIR}/custom_nodes && python main.py --listen --base-directory "${DATA_DIR}"
+#CMD python main.py --listen --base-directory "${DATA_DIR}"

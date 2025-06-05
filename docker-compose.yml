@@ -1,7 +1,6 @@
 services:
   ollama:
     image: ollama/ollama
-    container_name: ollama
     restart: unless-stopped
     ports:
       - "11434:11434"
@@ -18,8 +17,10 @@ services:
 
   openwebui:
     image: ghcr.io/open-webui/open-webui:main
-    container_name: openwebui
     restart: unless-stopped
+    profiles:
+      - openwebui
+      - all
     ports:
       - "3000:8080"
     volumes:
@@ -33,6 +34,20 @@ services:
       - host.docker.internal:host-gateway
     depends_on:
       - ollama
+  anythingllm:
+    image: mintplexlabs/anythingllm
+    restart: unless-stopped
+    profiles:
+      - anythingllm
+      - all
+    ports:
+      - "3001:3001"
+    environment:
+      - STORAGE_DIR=/data
+    volumes:
+      - ./data/anythingllm:/data
+    depends_on:
+      - ollama
 
   comfyui:
     build:
@@ -40,7 +55,8 @@ services:
       dockerfile: Dockerfile
       target: comfyui
     profiles:
-      - tbd
+      - comfyui
+      - all
     runtime: nvidia
     deploy:
       resources:
@@ -53,7 +69,7 @@ services:
     ports:
       - "8188:8188"
     volumes:
-      - ./data/comfyui:/workspace
+      - ./data/comfyui:/data
       - ./data/huggingface:/huggingface
 
   automatic1111:
@@ -61,6 +77,9 @@ services:
       context: .
       dockerfile: Dockerfile
       target: automatic1111
+    profiles:
+      - automatic1111
+      - all
     runtime: nvidia
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
