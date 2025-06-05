@@ -11,7 +11,8 @@ services:
           devices:
             - capabilities: [gpu]
     environment:
-      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_VISIBLE_DEVICES=${NVIDIA_VISIBLE_DEVICES:-all}
+      - OLLAMA_NEW_ENGINE=${OLLAMA_NEW_ENGINE:-false}
     volumes:
       - ./data/ollama:/root/.ollama
 
@@ -30,6 +31,7 @@ services:
       - COMFYUI_BASE_URL=http://comfyui:8188
       - AUTOMATIC1111_BASE_URL=http://automatic1111:7860
       - ENABLE_IMAGE_GENERATION=true
+      - WEBUI_AUTH=${WEBUI_AUTH:-true}
     extra_hosts:
       - host.docker.internal:host-gateway
     depends_on:

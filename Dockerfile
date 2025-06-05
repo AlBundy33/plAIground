@@ -73,5 +73,5 @@ EXPOSE 8188
 # to data/comfyui/models/checkpoints
 
 # Default entrypoint
-CMD mkdir ${DATA_DIR}/custom_nodes && python main.py --listen --base-directory "${DATA_DIR}"
+CMD mkdir -p ${DATA_DIR}/custom_nodes && python main.py --listen --base-directory "${DATA_DIR}"
 #CMD python main.py --listen --base-directory "${DATA_DIR}"
