@@ -1,2 +1,6 @@
-# Ignoriere lokale Daten- und Output-Ordner für Docker-Builds
-data/
+# ignore all by default
+*
+data
+# except Dockerfile and .dockerignore
+!Dockerfile
+!.dockerignore
