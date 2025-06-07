@@ -14,6 +14,18 @@ to check logs run
 docker compose logs -f
 ```
 
+# image generation
+to use comfyui you have to configure the comfyui-workflow-nodes
+for the default workflow:
+text: 6
+ckpt_name: 4
+width: 5
+height: 5
+steps: 3
+seed: 3
+
+You find the nodes and their IDs in the json-workflow.
+
 # environment variables
 ```
 docker compose run ollama serve --help
