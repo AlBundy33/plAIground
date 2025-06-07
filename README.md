@@ -45,6 +45,12 @@ Environment Variables:
       OLLAMA_GPU_OVERHEAD        Reserve a portion of VRAM per GPU (bytes)
       OLLAMA_LOAD_TIMEOUT        How long to allow model loads to stall before giving up (default "5m")
 ```
+# ocr
+for ocr I've added a tika service you can send data to this endpoint http://localhost:9998/tika
+e.g.
+```
+curl -s https://learnopencv.com/wp-content/uploads/2018/06/receipt.png | curl -s -H "accept: text/plain" -T - http://localhost:9998/tika
+```
 
 # cleanup
 If you are running docker in WSL2 it's better to use bind-mounts outside the wsl-VM.

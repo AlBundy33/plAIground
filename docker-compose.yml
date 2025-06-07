@@ -44,10 +44,22 @@ services:
       - all
     ports:
       - "3001:3001"
+    # https://github.com/Mintplex-Labs/anything-llm/blob/master/docker/.env.example
     environment:
-      - STORAGE_DIR=/data
+      - STORAGE_DIR=/app/server/storage
+      - LLM_PROVIDER=ollama
+      - OLLAMA_BASE_PATH=http://ollama:11434
+      - VECTOR_DB=lancedb
+      - OLLAMA_MODEL_PREF=llama3.1:8b
+      #- OLLAMA_MODEL_TOKEN_LIMIT=4096
+      - EMBEDDING_ENGINE=ollama
+      - EMBEDDING_BASE_PATH=http://ollama:11434
+      - EMBEDDING_MODEL_PREF=nomic-embed-text:latest
+      - EMBEDDING_MODEL_MAX_CHUNK_LENGTH=8192
     volumes:
-      - ./data/anythingllm:/data
+      - ./data/anythingllm/storage:/app/server/storage
+      - ./data/anythingllm/collector/hotdir:/app/collector/hotdir
+      - ./data/anythingllm/collector/output:/app/collector/output
     depends_on:
       - ollama
 
@@ -97,3 +109,34 @@ services:
           devices:
             - capabilities: [gpu]
 
+  tika:
+    image: apache/tika:latest-full
+    ports:
+      - "9998:9998"
+    restart: unless-stopped
+    environment:
+      - JAVA_OPTS=-Xmx2g
+    configs:
+      - source: tika_config
+        target: /tika-config.xml
+    command: [
+      "tika-server",
+      "--config=/tika-config.xml",
+      "--port=9998"
+    ]
+
+configs:
+  tika_config:
+    content: |
+      <?xml version="1.0" encoding="UTF-8"?>
+      <properties>
+        <parsers>
+          <parser class="org.apache.tika.parser.DefaultParser"/>
+        </parsers>
+        <ocr>
+          <tesseractPath>/usr/bin/tesseract</tesseractPath>
+          <language>deu+eng</language>
+          <enableImageProcessing>true</enableImageProcessing>
+          <ocrStrategy>auto</ocrStrategy>
+        </ocr>
+      </properties>
