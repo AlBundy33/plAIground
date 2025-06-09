@@ -14,6 +14,10 @@ to check logs run
 docker compose logs -f
 ```
 
+I've also added a litte app with an overview of all services.
+
+http://localhost:8500/
+
 # image generation
 to use comfyui you have to configure the comfyui-workflow-nodes
 for the default workflow:
