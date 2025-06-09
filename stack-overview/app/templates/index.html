@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Stack overview</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; }
+    h1 { margin-bottom: 2rem; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 0.5rem 0.8rem;
+      border: 1px solid #ccc;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background-color: #f0f0f0;
+    }
+    code {
+      background: #eee;
+      padding: 0.2rem 0.4rem;
+    }
+    a {
+      text-decoration: none;
+      color: #0066cc;
+      margin-right: 0.5em;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h1>Stack overview @ {{ server_name }}</h1>
+
+  {% if services %}
+    <table>
+      <thead>
+        <tr>
+          <th>Service</th>
+          <th>Ports</th>
+          <th>Image</th>
+          <th>Profiles</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for name, svc in services.items() %}
+        <tr>
+          <td><strong>{{ name }}</strong></td>
+          <td>
+            {% if svc.ports %}
+              {% for port in svc.ports %}
+                {% set host_port = port.split(':')[0].split('/')[0] %}
+                <a href="http://{{ server_name }}:{{ host_port }}" target="_blank">{{ port }}</a>
+              {% endfor %}
+            {% else %}
+              —
+            {% endif %}
+          </td>
+          <td><code>{{ svc.image or '—' }}</code></td>
+          <td>{{ svc.profiles|join(', ') if svc.profiles else '—' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p><em>Keine Services gefunden.</em></p>
+  {% endif %}
+</body>
+</html>
