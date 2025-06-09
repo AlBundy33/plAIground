@@ -44,6 +44,7 @@ services:
       - host.docker.internal:host-gateway
     depends_on:
       - ollama
+  
   anythingllm:
     image: mintplexlabs/anythingllm
     restart: unless-stopped
@@ -116,6 +117,20 @@ services:
       "--config=/tika-config.xml",
       "--port=9998"
     ]
+
+  jupyter:
+    # https://jupyter-docker-stacks.readthedocs.io/en/latest/using/recipes.html
+    <<: *gpu
+    image: jupyter/datascience-notebook
+    ports:
+      - "8888:8888"
+    profiles:
+      - all
+    environment:
+      - GRANT_SUDO=yes
+    command: start-notebook.py --IdentityProvider.token='' --notebook-dir=/notebooks
+    volumes:
+      - ./data/jupyter:/notebooks
 
 configs:
   tika_config:
