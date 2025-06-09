@@ -149,6 +149,8 @@ services:
       - all
     ports:
       - "8500:8500"
+    environment:
+      - SERVER_NAME=${SERVER_NAME:-localhost}
     volumes:
       - ./docker-compose.yml:/app/docker-compose.yml:ro
 
