@@ -86,6 +86,7 @@ services:
     volumes:
       - ./data/comfyui:/data
       - ./data/huggingface:/huggingface
+      - ./data/torch.hub:/torch.hub
 
   automatic1111:
     <<: *gpu
@@ -101,6 +102,7 @@ services:
     volumes:
       - ./data/automatic1111:/data
       - ./data/huggingface:/huggingface
+      - ./data/torch.hub:/torch.hub
 
   tika:
     image: apache/tika:latest-full
@@ -121,16 +123,21 @@ services:
   jupyter:
     # https://jupyter-docker-stacks.readthedocs.io/en/latest/using/recipes.html
     <<: *gpu
-    image: jupyter/datascience-notebook
+    #image: jupyter/datascience-notebook
+    image: quay.io/jupyter/pytorch-notebook:x86_64-cuda12-latest
     ports:
       - "8888:8888"
     profiles:
       - all
     environment:
       - GRANT_SUDO=yes
+      - HF_HOME=/huggingface
+      - TORCH_HOME=/torch.hub
     command: start-notebook.py --IdentityProvider.token='' --notebook-dir=/notebooks
     volumes:
       - ./data/jupyter:/notebooks
+      - ./data/huggingface:/huggingface
+      - ./data/torch.hub:/torch.hub
 
 configs:
   tika_config:

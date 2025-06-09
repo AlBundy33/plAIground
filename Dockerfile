@@ -34,16 +34,18 @@ WORKDIR /app
 RUN git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui .
 
 ENV HF_HOME=/huggingface
+ENV TORCH_HOME=/torch.hub
 ENV DATA_DIR=/data
 
 RUN --mount=type=cache,target=/root/.cache/pip \
-    mkdir -m 775 -p $DATA_DIR $HF_HOME \
+    mkdir -m 775 -p $DATA_DIR $HF_HOME $TORCH_HOME \
  && set -e \
  && ./webui.sh -f --data-dir $DATA_DIR --skip-torch-cuda-test --exit --xformers --reinstall-xformers
 
 EXPOSE 7860
 
 VOLUME ${HF_HOME}
+VOLUME ${TORCH_HOME}
 VOLUME ${DATA_DIR}
 
 # do not use json-sytanx for CMD or DATA_DIR will not be set
@@ -56,14 +58,16 @@ WORKDIR /app
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git .
 
 ENV HF_HOME=/huggingface
+ENV TORCH_HOME=/torch.hub
 ENV DATA_DIR=/data
 
 # Install requirements
 RUN --mount=type=cache,target=/root/.cache/pip \
-    mkdir -m 775 -p $HF_HOME $DATA_DIR \
+    mkdir -m 775 -p $HF_HOME $DATA_DIR $TORCH_HOME \
  && pip install -r requirements.txt
 
 VOLUME ${HF_HOME}
+VOLUME ${TORCH_HOME}
 VOLUME ${DATA_DIR}
 
 EXPOSE 8188
@@ -73,5 +77,6 @@ EXPOSE 8188
 # to data/comfyui/models/checkpoints
 
 # Default entrypoint
+# mkdir is workaround for https://github.com/comfyanonymous/ComfyUI/issues/8434
 CMD mkdir -p ${DATA_DIR}/custom_nodes && python main.py --listen --base-directory "${DATA_DIR}"
 #CMD python main.py --listen --base-directory "${DATA_DIR}"
