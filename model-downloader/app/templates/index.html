@@ -24,9 +24,8 @@
 <body>
   <h1>HuggingFace Model Downloader</h1>
   <form id="downloadForm" method="post">
-    <label for="model_id">Modell-ID (z. B. mistralai/Mistral-7B-Instruct-v0.2)</label><br />
-    <input type="text" name="model_id" id="model_id" required placeholder="Modell-ID eingeben" />
-    <input type="submit" value="Download starten" />
+    <input type="text" name="model_id" id="model_id" required placeholder="Model-ID (e.g. mistralai/Mistral-7B-Instruct-v0.2)" />
+    <input type="submit" value="Download" />
   </form>
 
   <div id="message" class="message {{ 'success' if message and '✅' in message else 'error' if message and '❌' in message else '' }}">
