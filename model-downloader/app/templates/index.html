@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>HuggingFace Model Downloader</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; max-width: 700px; margin: auto; }
+    input[type="text"] { width: 100%; padding: 0.5rem; margin-bottom: 1rem; }
+    input[type="submit"] { padding: 0.5rem 1rem; }
+    .message { margin-top: 1rem; }
+    .message.success { color: green; }
+    .message.error { color: red; }
+    table { width: 100%; border-collapse: collapse; margin-top: 2rem; }
+    th, td { border: 1px solid #ccc; padding: 0.5rem; text-align: left; }
+    #progressBar {
+      width: 100%; background: #eee; border-radius: 5px; overflow: hidden; margin-top: 1rem;
+    }
+    #progressBar > div {
+      height: 20px; background: #4caf50; width: 0%;
+      transition: width 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+  <h1>HuggingFace Model Downloader</h1>
+  <form id="downloadForm" method="post">
+    <label for="model_id">Modell-ID (z. B. mistralai/Mistral-7B-Instruct-v0.2)</label><br />
+    <input type="text" name="model_id" id="model_id" required placeholder="Modell-ID eingeben" />
+    <input type="submit" value="Download starten" />
+  </form>
+
+  <div id="message" class="message {{ 'success' if message and '✅' in message else 'error' if message and '❌' in message else '' }}">
+    {{ message or '' }}
+  </div>
+
+  <div id="progressContainer" style="display:none;">
+    <div id="progressBar"><div></div></div>
+    <div id="progressText"></div>
+  </div>
+
+  <h2>Models</h2>
+  <table id="modelTable">
+    <thead>
+      <tr><th>Model</th><th>MB</th></tr>
+    </thead>
+    <tbody>
+      {% for model in models %}
+        <tr><td>{{ model.name }}</td><td>{{ model.size }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+<script>
+  const progressContainer = document.getElementById("progressContainer");
+  const progressBar = document.querySelector("#progressBar > div");
+  const progressText = document.getElementById("progressText");
+  const messageEl = document.getElementById("message");
+  const modelTableBody = document.querySelector("#modelTable tbody");
+  const form = document.getElementById("downloadForm");
+
+  let intervalId = null;
+
+  function updateProgress() {
+    fetch("/progress")
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "running") {
+          progressContainer.style.display = "block";
+          let percent = data.total ? Math.round((data.progress / data.total) * 100) : 0;
+          progressBar.style.width = percent + "%";
+          progressText.textContent = `Files: ${data.progress} / ${data.total} (${percent}%) — Model: ${data.model_id}`;
+
+          // Tabelle neu laden
+          fetchModels();
+
+        } else if (data.status === "done") {
+          progressBar.style.width = "100%";
+          progressText.textContent = "✅ Download abgeschlossen.";
+          clearInterval(intervalId);
+          intervalId = null;
+          progressContainer.style.display = "none";
+          fetchModels();
+        } else if (data.status.startsWith("error")) {
+          progressText.textContent = data.status;
+          clearInterval(intervalId);
+          intervalId = null;
+          progressContainer.style.display = "none";
+        } else {
+          // idle oder sonstiges
+          progressContainer.style.display = "none";
+          clearInterval(intervalId);
+          intervalId = null;
+        }
+      });
+  }
+
+  function fetchModels() {
+    fetch("/")
+      .then(res => res.text())
+      .then(html => {
+        // Parse neue Tabelle aus der Antwort
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+        const newTbody = doc.querySelector("#modelTable tbody");
+        if(newTbody){
+          modelTableBody.innerHTML = newTbody.innerHTML;
+        }
+      });
+  }
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    if(intervalId) {
+      alert("Ein Download läuft bereits.");
+      return;
+    }
+    // Formular absenden via fetch, dann starten wir Polling
+    const formData = new FormData(form);
+    fetch("/", { method: "POST", body: formData })
+      .then(res => res.text())
+      .then(() => {
+        messageEl.textContent = "⬇️ Downloading...";
+        messageEl.className = "message success";
+        progressContainer.style.display = "block";
+        progressBar.style.width = "0%";
+        progressText.textContent = "Downlading...";
+        intervalId = setInterval(updateProgress, 2000);
+      });
+  });
+</script>
+</body>
+</html>
