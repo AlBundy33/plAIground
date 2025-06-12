@@ -35,7 +35,7 @@ services:
       - all
       - openwebui
     ports:
-      - "3000:8080"
+      - "8080:8080"
     volumes:
       - ./data/open-webui:/app/backend/data
     environment:
@@ -159,7 +159,7 @@ services:
     profiles:
       - all
     ports:
-      - "8500:8500"
+      - "4444:8500"
     environment:
       - SERVER_NAME=${SERVER_NAME:-localhost}
     volumes:
@@ -170,7 +170,7 @@ services:
     profiles:
       - all
     ports:
-      - "8080:8080"
+      - "4445:8080"
     volumes:
       - ./data/huggingface:/huggingface
 
