@@ -1,6 +1,6 @@
 # plAIground
 
-AI playground featuring Ollama, Open WebUI, AnythingLLmu, and Image Generation (ComfyUI/Automatic1111).
+AI playground featuring Ollama, Open WebUI, AnythingLLM, and Image Generation (ComfyUI/Automatic1111).
 
 ## 🚀 Quick Start
 
@@ -59,11 +59,31 @@ To use the default workflow, ensure your nodes match these parameters in the JSO
 
 ---
 
-## ⚙️ Setup & Maintenance
+## ⚙️ Configuration
+
+The stack is configured via a `.env` file. You can create one by copying the template:
+```bash
+cp .env.example .env
+```
+
+### Key Variables
+
+#### 🤖 LLM Control
+* **`ENABLE_OLLAMA_API`**: Set to `true` (default) to use local Ollama.
+* **`OPENAI_API_BASE_URL`**: If you provide a URL here (e.g., for LM Studio via `http://host.docker.internal:1234/v1`), Open WebUI will automatically enable the OpenAI-compatible mode.
+* **`OPENAI_API_KEY`**: The API key for external services.
+
+#### 🔐 Security & Services
+* **`WEBUI_AUTH`**: Set to `true` to enable authentication in Open WebUI.
+* **`WEBUI_SECRET_KEY`**: A secure string for session management.
+
+---
+
+## 🛠 Setup & Maintenance
 
 ### WSL2 & Docker Optimization (Windows Users)
 If running in WSL2, use bind-mounts outside the WSL-VM for better performance. To prevent the WSL VHDX from growing indefinitely:
-1.  **Cleanup Docker**: `docker system prune -to --volumes`
+1.  **Cleanup Docker**: `docker system prune -a --volumes`
 2.  **Shutdown WSL**: `wsl --shutdown`
 3.  **Shrink Disk (PowerShell)**: 
     `Optimize-VHD -Path "$env:USERPROFILE\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\LocalState\ext4.vhdx" -Mode Full`
@@ -83,4 +103,4 @@ sudo systemctl restart docker
 ```
 
 **Exposing Ports to LAN (Windows)**: 
-Run `wsl-portproxy.cmd` (which calls `wint-portproxy.ps1`) to make your services accessible from other devices on your local network.
+Run `wsl-portproxy.cmd` (which calls `wsl-portproxy.ps1`) to make your services accessible from other devices on your local network.
