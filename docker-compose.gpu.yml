@@ -1,0 +1,20 @@
+x-gpu: &gpu
+  runtime: nvidia
+  deploy:
+    resources:
+      reservations:
+        devices:
+          - capabilities: [gpu]
+  environment:
+    - NVIDIA_VISIBLE_DEVICES=all
+    - NVIDIA_DRIVER_CAPABILITIES=all
+
+services:
+  ollama:
+    <<: *gpu
+  comfyui:
+    <<: *gpu
+  automatic1111:
+    <<: *gpu
+  jupyter:
+    <<: *gpu
