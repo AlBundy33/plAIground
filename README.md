@@ -1,130 +1,86 @@
 # plAIground
-AI playground with NVIDIA RTX 3090 TI and ollama
 
-run with
-```
-docker compose up -d
-```
-or to start all services
-```
+AI playground featuring Ollama, Open WebUI, AnythingLLmu, and Image Generation (ComfyUI/Automatic1111).
+
+## 🚀 Quick Start
+
+This project uses a dual-mode configuration to support both CPU-only environments and NVIDIA GPU workstations.
+
+### Mode 1: CPU Only (Universal)
+Use this mode for any machine (Laptop, Server, etc.) without an NVIDIA GPU.
+```bash
 docker compose --profile all up -d
 ```
-to check logs run
-```
-docker compose logs -f
-```
 
-I've also added a litte app with an overview of all services.
-
-http://localhost:8500/
-
-# image generation
-to use comfyui you have to configure the comfyui-workflow-nodes
-for the default workflow:
-text: 6
-ckpt_name: 4
-width: 5
-height: 5
-steps: 3
-seed: 3
-
-You find the nodes and their IDs in the json-workflow.
-
-# environment variables
-```
-docker compose run ollama serve --help
-Start ollama
-
-Usage:
-  ollama serve [flags]
-
-Aliases:
-  serve, start
-
-Flags:
-  -h, --help   help for serve
-
-Environment Variables:
-      OLLAMA_DEBUG               Show additional debug information (e.g. OLLAMA_DEBUG=1)
-      OLLAMA_HOST                IP Address for the ollama server (default 127.0.0.1:11434)
-      OLLAMA_KEEP_ALIVE          The duration that models stay loaded in memory (default "5m")
-      OLLAMA_MAX_LOADED_MODELS   Maximum number of loaded models per GPU
-      OLLAMA_MAX_QUEUE           Maximum number of queued requests
-      OLLAMA_MODELS              The path to the models directory
-      OLLAMA_NUM_PARALLEL        Maximum number of parallel requests
-      OLLAMA_NOPRUNE             Do not prune model blobs on startup
-      OLLAMA_ORIGINS             A comma separated list of allowed origins
-      OLLAMA_SCHED_SPREAD        Always schedule model across all GPUs
-      OLLAMA_FLASH_ATTENTION     Enabled flash attention
-      OLLAMA_KV_CACHE_TYPE       Quantization type for the K/V cache (default: f16)
-      OLLAMA_LLM_LIBRARY         Set LLM library to bypass autodetection
-      OLLAMA_GPU_OVERHEAD        Reserve a portion of VRAM per GPU (bytes)
-      OLLAMA_LOAD_TIMEOUT        How long to allow model loads to stall before giving up (default "5m")
-```
-# ocr
-for ocr I've added a tika service you can send data to this endpoint http://localhost:9998/tika
-e.g.
-```
-curl -s https://learnopencv.com/wp-content/uploads/2018/06/receipt.png | curl -s -H "accept: text/plain" -T - http://localhost:9998/tika
+### Mode 2: GPU Accelerated
+Use this mode on machines with an **NVIDIA GPU** and the **NVIDIA Container Toolkit** installed. This enables hardware acceleration for Ollama, ComfyUI, Automatic1111, and Jupyter.
+```bash
+docker compose --profile all -f docker-compose.yml -f docker-compose.gpu.yml up -d
 ```
 
-# cleanup
-If you are running docker in WSL2 it's better to use bind-mounts outside the wsl-VM.
-If the VM-Image grows due multiple builds you can try to cleanup docker
-```
-docker system prune -a --volumes
-```
-and in a powershell
-shutdown the WSL-VM
-```
-wsl --shutdown
-```
-and shrink the image (path must be changed)
-```
-Optimize-VHD -Path "$env:USERPROFILE\\AppData\\Local\\Packages\\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\\LocalState\\ext4.vhdx" -Mode Full
+### Useful Commands
+* **View Logs**: `docker compose logs -f`
+* **Stop Stack**: `docker compose down`
+* **Check Status**: `docker compose ps`
+
+---
+
+## 🛠 Services Overview
+
+| Service | Port | Description |
+| :--- | :--- | :--- |
+| **Open WebUI** | `8080` | Main interface for LLMs (with Web Search & Tika integration). |
+| **AnythingLLM** | `3001` | RAG-focused client with local vector support. |
+
+| Service | Port | Description |
+| :--- | :--- | :--- |
+| **Ollama** | `11434` | Local LLM engine. |
+| **ComfyUI** | `8188` | Stable Diffusion node-based UI (GPU required for speed). |
+| **Automatic1111** | `7860` | Stable Diffusion WebUI. |
+| **Jupyter** | `8888` | Python/Data Science notebook. |
+| **Qdrant** | `6333` | Vector database for RAG. |
+| **Tika** | `9998` | Content extraction engine (OCR/Text). |
+| **SearXNG** | `9081` | Privacy-respecting metasearch engine. |
+| **Stack Overview** | `4444` | Dashboard for service monitoring. |
+
+---
+
+## 🔍 Feature Usage
+
+### OCR & Document Processing (Tika)
+You can send documents to the Tika endpoint to extract text/OCR:
+```bash
+curl -s https://example.com/image.png | curl -s -H "accept: text/plain" -T - http://localhost:9998/tika
 ```
 
-or you can move the vm-disk to another drive
-```
-wsl --shutdown
-wsl --manage Ubuntu --move d:\wsl
-```
+### Image Generation (ComfyUI)
+To use the default workflow, ensure your nodes match these parameters in the JSON:
+* **Text**: 6, **ckpt_name**: 4, **width**: 5, **height**: 5, **steps**: 3, **seed**: 3.
 
-# setup Windows Subsystem for Linux (WSL)
-https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
+---
 
-```
-# Add Docker's official GPG key:
-sudo apt-get update
-sudo apt-get install ca-certificates curl
-sudo install -m 0755 -d /etc/apt/keyrings
-sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-sudo chmod a+r /etc/apt/keyrings/docker.asc
+## ⚙️ Setup & Maintenance
 
-# Add the repository to Apt sources:
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-  $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
-  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update
+### WSL2 & Docker Optimization (Windows Users)
+If running in WSL2, use bind-mounts outside the WSL-VM for better performance. To prevent the WSL VHDX from growing indefinitely:
+1.  **Cleanup Docker**: `docker system prune -to --volumes`
+2.  **Shutdown WSL**: `wsl --shutdown`
+3.  **Shrink Disk (PowerShell)**: 
+    `Optimize-VHD -Path "$env:USERPROFILE\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\LocalState\ext4.vhdx" -Mode Full`
 
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-
-sudo usermod -aG docker $USER
-newgrp docker
-```
-
-https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html
-```
+### Prerequisites (Linux/WSL)
+**NVIDIA Container Toolkit Installation:**
+```bash
 curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
   && curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list | \
     sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
     sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+
 sudo apt-get update
 sudo apt-get install -y nvidia-container-toolkit
-
 sudo nvidia-ctk runtime configure --runtime=docker
 sudo systemctl restart docker
 ```
 
-run [wsl-portproxy.cmd](wsl-portproxy.cmd) (uses [wsl-portproxy.ps1](wsl-portproxy.ps1)) to expose ports to your LAN (otherwise you can only use localhost)
+**Exposing Ports to LAN (Windows)**: 
+Run `wsl-portproxy.cmd` (which calls `wint-portproxy.ps1`) to make your services accessible from other devices on your local network.
