@@ -49,6 +49,10 @@ services:
     volumes:
       - ./data/open-webui:/app/backend/data
     environment:
+      - ENABLE_OPENAI_API=${ENABLE_OPENAI_API:-false}
+      - OPENAI_API_BASE_URL=${OPENAI_API_BASE_URL:-}
+      - OPENAI_API_KEY=${OPEN_API_KEY:-}
+      - ENABLE_OLLAMA_API=${ENABLE_OLLAMA_API:-true}
       - OLLAMA_API_BASE_URL=http://ollama:11434
       - COMFYUI_BASE_URL=http://comfyui:8188
       - AUTOMATIC1111_BASE_URL=http://automatic1111:7860
@@ -63,7 +67,7 @@ services:
       - SEARXNG_QUERY_URL=http://searxng:8080/search
       - CONTENT_EXTRACTION_ENGINE=tika
       - TIKA_SERVER_URL=http://tika:9998
-      - WEBUI_SECRET_KEY=${WEBCR_SECRET:-default_secret_key}
+      - WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY:-default_empty_key}
     extra_hosts:
       - host.docker.internal:host-gateway
     depends_on:
@@ -124,7 +128,7 @@ services:
     ports:
       - "7860:7860"
     volumes:
-      - ./data/automatic11  :/data
+      - ./data/automatic1111:/data
       - ./data/huggingface:/huggingface
       - ./data/torch.hub:/torch.hub
 
@@ -196,7 +200,7 @@ configs:
           <tesseractPath>/usr/bin/tesseract</tesseractPath>
           <language>deu+eng</language>
           <enableImageProcessing>true</enableImageProcessing>
-          <ocrStrategy>auto</ocr  strategy>
+          <ocrStrategy>auto</ocrStrategy>
         </ocr>
       </properties>
   searxng_config:
