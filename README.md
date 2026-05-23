@@ -2,6 +2,15 @@
 
 AI playground featuring Ollama, Open WebUI, AnythingLLM, and Image Generation (ComfyUI/Automatic1111).
 
+## 🧠 Project Philosophy
+
+**This project is designed as an educational playground.** 
+
+The primary goal is to allow users to $\text{explore}$, $\text{understand}$, and $\text{experiment}$ with individual AI services in a containerized environment. To facilitate easy testing, debugging, and direct interaction (via CLI or Browser) without complex networking hurdles, **services are intentionally configured to expose their ports directly to the host**.
+
+> [!WARNING]
+> **Not for Production**: Because of this intentional port exposure, this configuration should **never** be used in a production environment or on a publicly accessible server.
+
 ## 🚀 Quick Start
 
 This project uses a dual-mode configuration to support both CPU-only environments and NVIDIA GPU workstations.
@@ -27,25 +36,39 @@ docker compose --profile all -f docker-compose.yml -f docker-compose.gpu.yml up 
 
 ## 🛠 Services Overview
 
+### 🖥️ Interfaces (Web UIs)
 | Service | Port | Description |
 | :--- | :--- | :--- |
 | **Open WebUI** | `8080` | Main interface for LLMs (with Web Search & Tika integration). |
 | **AnythingLLM** | `3001` | RAG-focused client with local vector support. |
+| **Stack Overview** | `4444` | Dashboard for service monitoring and stack status. |
 
+### 🤖 Inference & Generation
 | Service | Port | Description |
 | :--- | :--- | :--- |
-| **Ollama** | `11434` | Local LLM engine. |
+| **Ollama** | `11434` | Local LLM engine (running models like Llama 3.1). |
 | **ComfyUI** | `8188` | Stable Diffusion node-based UI (GPU required for speed). |
 | **Automatic1111** | `7860` | Stable Diffusion WebUI. |
-| **Jupyter** | `8888` | Python/Data Science notebook. |
-| **Qdrant** | `6333` | Vector database for RAG. |
-| **Tika** | `9998` | Content extraction engine (OCR/Text). |
-| **SearXNG** | `9081` | Privacy-respecting metasearch engine. |
-| **Stack Overview** | `4444` | Dashboard for service monitoring. |
+| **Jupyter** | `8888` | Python/Data Science notebook for AI experimentation. |
+
+### 🏗️ Data & Infrastructure
+| Service | Port | Description |
+| :--- | :--- | :--- |
+| **Qdrant** | `6333` | Vector database for RAG (Retrieval Augmented Generation). |
+| **Tika** | `9998` | Content extraction engine (OCR/Text/Document parsing). |
+| **SearXNG** | `9081` | Privacy-respecting metasearch engine for web search integration. |
+| **Valkey** | `6379` | High-performance key-value store (Redis alternative) for caching. |
 
 ---
 
 ## 🔍 Feature Usage
+
+### Running Specific Services (Profiles)
+To save resources, you can start only the services you are currently interested in using Docker Compose **profiles**:
+
+* **Start only Ollama**: `docker compose --profile ollama up -d`
+* **Start only Image Generation**: `docker compose --profile comfyui up -d`
+* **Start everything**: `docker compose --profile all up -d`
 
 ### OCR & Document Processing (Tika)
 You can send documents to the Tika endpoint to extract text/OCR:
@@ -86,7 +109,7 @@ If running in WSL2, use bind-mounts outside the WSL-VM for better performance. T
 1.  **Cleanup Docker**: `docker system prune -a --volumes`
 2.  **Shutdown WSL**: `wsl --shutdown`
 3.  **Shrink Disk (PowerShell)**: 
-    `Optimize-VHD -Path "$env:USERPROFILE\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\LocalState\ext4.vhdx" -Mode Full`
+    `Optimize-VHD -Path "$env:USERPROFILE\\AppData\\Local\\Packages\\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\\LocalState\\ext4.vhdx" -Mode Full`
 
 ### Prerequisites (Linux/WSL)
 **NVIDIA Container Toolkit Installation:**
@@ -103,4 +126,4 @@ sudo systemctl restart docker
 ```
 
 **Exposing Ports to LAN (Windows)**: 
-Run `wsl-portproxy.cmd` (which calls `wsl-portproxy.ps1`) to make your services accessible from other devices on your local network.
+Run `wsl-portproxy.cmd` (which calls `wint-portproxy.ps1`) to make your services accessible from other devices on your local network.
