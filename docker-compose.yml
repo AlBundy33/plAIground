@@ -13,6 +13,8 @@ services:
     image: qdrant/qdrant
     ports:
       - "6333:6333"
+    environment:
+      - QDRANT__TELEMETRY_DISABLED=true
     volumes:
       - ./data/qdrant:/qdrant/storage
 
