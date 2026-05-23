@@ -200,11 +200,13 @@ services:
     restart: unless-stopped
     profiles:
       - all
+      - n8n
     ports:
       - "5678:5678"
     # https://docs.n8n.io/hosting/configuration/environment-variables/
     environment:
       - N8N_SECURE_COOKIE=false
+    # manually create ./data/n8n and chown 1000. ./data/n8n
     volumes:
       - ./data/n8n:/home/node/.n8n
 
