@@ -1,6 +1,38 @@
-# ignore all by default
-*
-data
-# except Dockerfile and .dockerignore
-!Dockerfile
-!.dockerignore
+# --- Security (Prevents copying sensitive data) ---
+.env
+*.key
+*.pem
+*.secret
+*.sh
+
+# --- Git (Reduces build context size significantly) ---
+.git
+.gitignore
+.gitattributes
+
+# --- Docker & Orchestration (Files that shouldn't be in the image) ---
+Dockerfile
+Dockerfile.*
+docker-compose.yml
+.dockerignore
+docker-compose.override.yml
+
+# --- Documentation (Prevents cache invalidation on text changes) ---
+README.md
+LICENSE
+CHANGELOG.md
+CONTRIBUTING.md
+*.md
+
+# --- System & Temporary (Avoids unnecessary "junk" in the image) ---
+.DS_Store       # macOS specific
+Thumbs.db       # Windows specific
+*.log           # Log files
+tmp/
+temp/
+.cache/
+
+# --- Safety net (In case local artifacts are created) ---
+__pycache__/
+.venv/
+node_modules/
