@@ -127,3 +127,9 @@ sudo systemctl restart docker
 
 **Exposing Ports to LAN (Windows)**: 
 Run `wsl-portproxy.cmd` (which calls `wint-portproxy.ps1`) to make your services accessible from other devices on your local network.
+
+---
+
+## 🤖 AI Assistance Notice
+
+Parts of the development, documentation, and configuration management of this project are performed with the assistance of **Pi** (from [pi.dev](https://pi.dev)) using the **google/gemma-4-26b-a4b** model.
