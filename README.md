@@ -10,6 +10,8 @@ The primary goal is to allow users to $\text{explore}$, $\text{understand}$, and
 
 > [!WARNING]
 > **Not for Production**: Because of this intentional port exposure, this configuration should **never** be used in a production environment or on a publicly accessible server.
+>
+> **Minimal Authentication**: To keep the setup simple for learning purposes, most services are configured to require **no authentication by default** (e.g., Open WebUI, AnythingLLM, Jupyter). Only n8n enforces a login. This is intentional for local experimentation but reinforces why this stack must never be exposed to untrusted networks.
 
 ## 🚀 Quick Start
 
@@ -39,7 +41,7 @@ docker compose --profile all -f docker-compose.yml -f docker-compose.gpu.yml up 
 ### 🖥️ Interfaces (Web UIs)
 | Service | Port | Description |
 | :--- | :--- | :--- |
-| **Open WebUI** | `8080` | Main interface for LLMs (with Web Search & Tika integration). |
+| **Open WebUI** | `8080` | Main interface for LLMs (with Web Search & Tika integration). Runs without authentication by default (`WEBUI_AUTH=false`). |
 | **AnythingLLM** | `3001` | RAG-focused client with local vector support. |
 | **n8n** | `5678` | Workflow automation and AI agent orchestration. |
 | **Stack Overview** | `4444` | Dashboard for service monitoring and stack status. |
@@ -120,6 +122,14 @@ cp .env.example .env
   ```bash
   docker run --rm node:20-alpine sh -c "cd /tmp && npm install bcryptjs && node -e \"const bcryptjs = require('bcryptjs'); console.log(bcryptjs.hashSync('YOUR_PASSWORD', 10))\""
   ```
+
+#### 🔑 Default n8n Login
+The default instance owner account (auto-provisioned on first start) uses:
+* **Email**: `admin@local.lan`
+* **Password**: `admin`
+
+> [!WARNING]
+> n8n does **not** allow changing credentials through the web UI when managed via environment variables. To update your login data, modify the corresponding variables (`N8N_INSTANCE_OWNER_EMAIL`, `N8N_INSTANCE_OWNER_PASSWORD_HASH`, etc.) in your `.env` file and restart the container.
 
 ---
 
