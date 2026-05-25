@@ -84,7 +84,7 @@ curl -s https://example.com/image.png | curl -s -H "accept: text/plain" -T - htt
 To use the default workflow, ensure your nodes match these parameters in the JSON:
 * **Text**: 6, **ckpt_name**: 4, **width**: 5, **height**: 5, **steps**: 3, **seed**: 3.
 
-> 💡 *Note: This setup is based on insights from [this Open WebUI discussion](https://github.com/open-webui/open-webui/discussions/13434).*
+> 💡 *Note: I believe this info might come from [this Open WebUI discussion](https://github.com/open-webui/open-webui/discussions/13434).*
 
 ---
 
