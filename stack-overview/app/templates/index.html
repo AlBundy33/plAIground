@@ -19,6 +19,16 @@
     th {
       background-color: #f0f0f0;
     }
+    .status {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+    .status.running { background-color: #4caf50; }
+    .status.stopped { background-color: #f44336; }
+    .status.unknown { background-color: #9e9e9e; }
     code {
       background: #eee;
       padding: 0.2rem 0.4rem;
@@ -40,6 +50,7 @@
     <table>
       <thead>
         <tr>
+          <th>Status</th>
           <th>Service</th>
           <th>Ports</th>
           <th>Image</th>
@@ -49,6 +60,15 @@
       <tbody>
         {% for name, svc in services.items() %}
         <tr>
+          <td>
+            {% if svc.status is none %}
+              <span class="status unknown" title="No port to check"></span>
+            {% elif svc.status %}
+              <span class="status running" title="Running"></span>
+            {% else %}
+              <span class="status stopped" title="Stopped"></span>
+            {% endif %}
+          </td>
           <td><strong>{{ name }}</strong></td>
           <td>
             {% if svc.ports %}

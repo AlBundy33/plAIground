@@ -65,7 +65,7 @@ services:
       - all
       - openwebui
     ports:
-      - "8080:8080"
+      - "9080:8080"
     volumes:
       - ./data/open-webui:/app/backend/data
     # https://docs.openwebui.com/reference/env-configuration/
@@ -199,7 +199,7 @@ services:
     ports:
       - "4444:8500"
     environment:
-      - SERVER_NAME=${SERVER_NAME:-localhost}
+      - SERVER_NAME=${PLAIGROUND_HOST:-localhost}
     volumes:
       - ./docker-compose.yml:/app/docker-compose.yml:ro
 
@@ -227,7 +227,7 @@ services:
     # https://docs.n8n.io/hosting/configuration/user-management-self-hosted/
     # https://docs.n8n.io/hosting/configuration/environment-variables/
     environment:
-      - N8N_HOST=${N8N_HOST:-localhost}
+      - N8N_HOST=${PLAIGROUND_HOST:-localhost}
       - N8N_PROTOCOL=${N8N_PROTOCOL:-http}
       - N8N_PORT=${N8N_PORT:-5678}
       - N8N_SECURE_COOKIE=${N8N_SECURE_COOKIE:-false}
