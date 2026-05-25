@@ -41,6 +41,7 @@ docker compose --profile all -f docker-compose.yml -f docker-compose.gpu.yml up 
 | :--- | :--- | :--- |
 | **Open WebUI** | `8080` | Main interface for LLMs (with Web Search & Tika integration). |
 | **AnythingLLM** | `3001` | RAG-focused client with local vector support. |
+| **n8n** | `5678` | Workflow automation and AI agent orchestration. |
 | **Stack Overview** | `4444` | Dashboard for service monitoring and stack status. |
 
 ### 🤖 Inference & Generation
@@ -68,6 +69,7 @@ To save resources, you can start only the services you are currently interested 
 
 * **Start only Ollama**: `docker compose --profile ollama up -d`
 * **Start only Image Generation**: `docker compose --profile comfyui up -d`
+* **Start only n8n**: `docker compose --profile n8n up -d`
 * **Start everything**: `docker compose --profile all up -d`
 
 ### OCR & Document Processing (Tika)
@@ -99,6 +101,21 @@ cp .env.example .env
 #### 🔐 Security & Services
 * **`WEBUI_AUTH`**: Set to `true` to enable authentication in Open WebUI.
 * **`WEBUI_SECRET_KEY`**: A secure string for session management.
+
+#### ⚙️ n8n Configuration
+* **`N8N_HOST`**: Hostname for n8n (default: `localhost`).
+* **`N8N_PROTOCOL`**: Protocol for n8n (default: `http`).
+* **`N8N_PORT`**: Port for n8n (default: `5678`).
+* **`N8N_SECURE_COOKIE`**: Set to `true` when using HTTPS (default: `false`).
+* **`N8N_ENCRYPTION_KEY`**: REQUIRED. A secure encryption key for n8n data. Generate with `openssl rand -base64 24`.
+* **`N8N_INSTANCE_OWNER_MANAGED_BY_ENV`**: Set to `true` to auto-provision the owner account on first start.
+* **`N8N_INSTANCE_OWNER_EMAIL`**: Email address for the n8n owner account.
+* **`N8N_INSTANCE_OWNER_FIRST_NAME`**: First name for the n8n owner account.
+* **`N8N_INSTANCE_OWNER_LAST_NAME`**: Last name for the n8n owner account.
+* **`N8N_INSTANCE_OWNER_PASSWORD_HASH`**: bcrypt hash of the owner's password. Generate with:
+  ```bash
+  docker run --rm node:20-alpine sh -c "cd /tmp && npm install bcryptjs && node -e \"const bcryptjs = require('bcryptjs'); console.log(bcryptjs.hashSync('YOUR_PASSWORD', 10))\""
+  ```
 
 ---
 
