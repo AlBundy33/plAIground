@@ -9,6 +9,7 @@ services:
       - anythingllm
     ports:
       - "11434:11434"
+    x-plaiground-ui: []
     # https://docs.ollama.com/faq
     environment:
       - OLLAMA_NEW_ENGINE=${OLLAMA_NEW_ENGINE:-false}
@@ -23,6 +24,9 @@ services:
       - openwebui
     ports:
       - "6333:6333"
+    x-plaiground-ui:
+      - path: /dashboard
+        label: Dashboard
     # https://qdrant.tech/documentation/ops-configuration/configuration/
     environment:
       - QDRANT__TELEMETRY_DISABLED=true
@@ -37,6 +41,7 @@ services:
       - openwebui
     ports:
       - "6379:6379"
+    x-plaiground-ui: []
     environment:
       - SEARXNG_SECRET=${SEARXNG_SECRET:-some_random_secret_key}
 

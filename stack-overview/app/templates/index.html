@@ -41,6 +41,11 @@
     a:hover {
       text-decoration: underline;
     }
+    .extra-links {
+      font-size: 0.9em;
+      color: #555;
+      margin-left: 0.5em;
+    }
   </style>
 </head>
 <body>
@@ -69,7 +74,25 @@
               <span class="status stopped" title="Stopped"></span>
             {% endif %}
           </td>
-          <td><strong>{{ name }}</strong></td>
+          <td>
+            {% if svc.ui_links %}
+              {% set first_link = svc.ui_links[0] %}
+              {% set first_label = first_link.label if first_link.label else name %}
+              <a href="http://{{ server_name }}:{{ first_link.external_port }}{{ first_link.path }}" target="_blank">{{ first_label }}</a>
+              
+              {% if svc.ui_links|length > 1 %}
+                <span class="extra-links">
+                  ({% for link in svc.ui_links[1:] %}
+                    {% set link_label = link.label if link.label else link.path %}
+                    <a href="http://{{ server_name }}:{{ link.external_port }}{{ link.path }}" target="_blank">{{ link_label }}</a>
+                    {% if not loop.last %}, {% endif %}
+                  {% endfor %})
+                </span>
+              {% endif %}
+            {% else %}
+              <strong>{{ name }}</strong>
+            {% endif %}
+          </td>
           <td>
             {% if svc.ports %}
               {% for port in svc.ports %}
