@@ -68,8 +68,10 @@ docker compose --profile all -f docker-compose.yml -f docker-compose.gpu.yml up 
 To save resources, you can start only the services you are currently interested in using Docker Compose **profiles**:
 
 * **Start only Ollama**: `docker compose --profile ollama up -d`
-* **Start only Image Generation**: `docker compose --profile comfyui up -d`
+* **Start only Image Generation**: `docker compose --profile comfyui up -d` (includes model-downloader)
+* **Start only Automatic1111**: `docker compose --profile automatic1111 up -d` (includes model-downloader)
 * **Start only n8n**: `docker compose --profile n8n up -d`
+* **Start only Stack Overview**: `docker compose --profile stack-overview up -d`
 * **Start everything**: `docker compose --profile all up -d`
 
 ### OCR & Document Processing (Tika)

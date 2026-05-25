@@ -195,6 +195,7 @@ services:
     build: stack-overview
     profiles:
       - all
+      - stack-overview
     ports:
       - "4444:8500"
     environment:
@@ -206,6 +207,8 @@ services:
     build: model-downloader
     profiles:
       - all
+      - comfyui
+      - automatic1111
     ports:
       - "4445:8080"
     volumes:
