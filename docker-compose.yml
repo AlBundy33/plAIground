@@ -26,7 +26,6 @@ services:
       - "6333:6333"
     x-plaiground-ui:
       - path: /dashboard
-        label: Dashboard
     # https://qdrant.tech/documentation/ops-configuration/configuration/
     environment:
       - QDRANT__TELEMETRY_DISABLED=true
